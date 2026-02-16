@@ -1,147 +1,252 @@
-# Hologo V4 Dashboard
+# Shippy Frontend v1
 
-A modern dashboard application built with Next.js 15, TypeScript, Tailwind CSS, and shadcn/ui.
+A modern shipping management application built with Next.js 14, featuring authentication, role-based dashboards, and shipment tracking capabilities.
 
-## Features
+## 🚀 Tech Stack
 
-- 🔐 **Authentication**: NextAuth.js v5 with JWT tokens
-- 🎨 **Modern UI**: shadcn/ui components with Tailwind CSS
-- 📱 **Responsive Design**: Mobile-first approach
-- 🔒 **Protected Routes**: Middleware-based route protection
-- 🎯 **Type Safe**: Full TypeScript support
+- **Framework:** Next.js 14 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **Authentication:** NextAuth.js
+- **UI Components:** Custom component library built with Radix UI primitives
+- **State Management:** React hooks and server components
 
-## Tech Stack
+## 📋 Prerequisites
 
-- **Framework**: Next.js 15 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **UI Components**: shadcn/ui
-- **Authentication**: NextAuth.js v5
-- **Icons**: Lucide React
+Before you begin, ensure you have the following installed:
 
-## Getting Started
+- Node.js 18.x or higher
+- npm or yarn package manager
+- Git
 
-### Prerequisites
+## 🛠️ Getting Started
 
-- Node.js 18+ 
-- npm or yarn
+### 1. Clone the Repository
 
-### Installation
+```bash
+git clone <repository-url>
+cd shippy-frontend-v1
+```
 
-1. Install dependencies:
+### 2. Install Dependencies
 
 ```bash
 npm install
+# or
+yarn install
 ```
 
-2. Set up environment variables:
+### 3. Environment Setup
 
-Create a `.env.local` file in the root directory:
+Create a `.env.local` file in the root directory with the following variables:
 
 ```env
+# NextAuth Configuration
 NEXTAUTH_URL=http://localhost:3000
 NEXTAUTH_SECRET=your-secret-key-here
-NEXT_PUBLIC_API_URL=http://localhost:3000/api
+
+# API Configuration
+NEXT_PUBLIC_API_URL=your-api-url-here
+
+# Add other environment variables as needed
 ```
 
-To generate a secure `NEXTAUTH_SECRET`:
-
-```bash
-openssl rand -base64 32
-```
-
-3. Run the development server:
+### 4. Run the Development Server
 
 ```bash
 npm run dev
+# or
+yarn dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
-## Project Structure
+## 📁 Project Structure
 
 ```
-hologo-v4-dashboard/
-├── app/
-│   ├── (auth)/
-│   │   ├── login/          # Login page
-│   │   └── register/       # Registration page
-│   ├── (main)/             # Protected routes
-│   ├── api/
-│   │   └── auth/           # NextAuth API routes
-│   ├── globals.css
-│   └── layout.tsx
-├── components/
-│   └── ui/                 # shadcn/ui components
-├── lib/
-│   ├── fetcher.ts          # API fetcher utilities
-│   └── utils.ts            # Utility functions
-├── auth.ts                 # NextAuth configuration
-└── middleware.ts           # Route protection middleware
+shippy-frontend-v1/
+├── app/                          # Next.js App Router directory
+│   ├── (auth)/                   # Authentication route group
+│   │   ├── login/               # Login page
+│   │   └── register/            # Registration page
+│   ├── (main)/                  # Main application route group
+│   │   ├── admin/               # Admin-only routes
+│   │   │   └── dashboard/       # Admin dashboard
+│   │   └── client/              # Client-only routes
+│   │       ├── dashboard/       # Client dashboard
+│   │       └── profile/         # User profile management
+│   ├── api/                     # API routes
+│   │   └── auth/                # NextAuth API routes
+│   ├── constants/               # Application constants
+│   ├── globals.css              # Global styles
+│   └── layout.tsx               # Root layout
+├── components/                   # React components
+│   ├── profile/                 # Profile-related components
+│   ├── shipment/                # Shipment-related components
+│   ├── sidebar/                 # Navigation sidebars
+│   └── ui/                      # Reusable UI components
+├── lib/                         # Utility libraries
+│   ├── fetcher.ts              # API fetching utilities
+│   └── utils.ts                # Helper functions
+├── services/                    # API service layer
+│   ├── profile.service.ts      # Profile API calls
+│   ├── register.service.ts     # Registration API calls
+│   └── shipment.service.ts     # Shipment API calls
+├── types/                       # TypeScript type definitions
+│   ├── auth.type.ts            # Authentication types
+│   ├── next-auth.d.ts          # NextAuth type extensions
+│   ├── profile.type.ts         # Profile types
+│   └── shipment.type.ts        # Shipment types
+├── auth.ts                      # NextAuth configuration
+├── middleware.ts                # Next.js middleware (route protection)
+└── tailwind.config.ts          # Tailwind CSS configuration
 ```
 
-## Authentication Flow
+## 🔑 Key Features
 
-1. **Login**: Users can log in with email and password
-2. **Registration**: New users can create an account
-3. **Protected Routes**: Middleware protects routes in the `(main)` group
-4. **JWT Tokens**: Sessions are managed via JWT tokens
+### Authentication
 
-## Available Routes
+- User registration and login
+- NextAuth.js integration
+- Protected routes via middleware
+- Role-based access control (Admin/Client)
 
-- `/login` - Login page
-- `/register` - Registration page
-- `/admin/dashboard` - Admin dashboard (protected)
-- `/school/dashboard` - School dashboard (protected)
+### User Roles
 
-## Development
+#### Admin
 
-### Adding New Pages
+- Access to admin dashboard
+- Manage all shipments
+- User management capabilities ( Not implemented)
 
-1. Create a new folder in `app/(main)/`
-2. Add `page.tsx` for the page component
-3. Routes are automatically created based on folder structure
+#### Client
 
-### Adding New UI Components
+- Personal dashboard
+- Profile management
+- Shipment creation
+- Shipment tracking
 
-This project uses shadcn/ui. To add new components:
+### Core Modules
+
+1. **Profile Management**
+   - View and edit user profile
+   - Address CRUD operations
+   - Modal-based interactions
+
+2. **Shipment Management**
+   - Create new shipments
+   - View shipment history
+   - Track shipment status
+
+3. **Dashboard**
+   - Role-specific dashboards
+   - Overview of key metrics
+   - Quick actions
+
+## 🎨 UI Components
+
+The project uses a custom component library located in `components/ui/`:
+
+- **Forms:** Input, Textarea, Select, Checkbox, Label, Field
+- **Feedback:** Alert, Badge, Dialog
+- **Navigation:** Breadcrumb, Sidebar
+- **Data Display:** Table, Card
+- **Actions:** Button
+- **Layout:** Separator
+
+All components are built with accessibility in mind and use Tailwind CSS for styling.
+
+## 🔧 Development Guidelines
+
+### File Naming Conventions
+
+- **Components:** PascalCase (e.g., `AddressModal.tsx`)
+- **Services:** kebab-case with `.service.ts` suffix
+- **Types:** kebab-case with `.type.ts` suffix
+- **Pages:** lowercase with `.tsx` extension
+
+### Route Groups
+
+The project uses Next.js route groups for organization:
+
+- `(auth)`: Public authentication pages
+- `(main)`: Protected application pages
+
+### Client vs Server Components
+
+- Pages are Server Components by default
+- Client-side interactivity is in separate `client.tsx` files
+- Use `"use client"` directive only when necessary
+
+### API Services
+
+All API calls should go through the service layer in `services/`:
+
+```typescript
+// Example service usage
+import { getProfile, updateProfile } from "@/services/profile.service";
+
+const profile = await getProfile(userId);
+await updateProfile(userId, updatedData);
+```
+
+## 🧪 Code Style
+
+- Use TypeScript for type safety
+- Follow ESLint configuration
+- Use Prettier for code formatting
+- Write meaningful commit messages
+
+## 📝 Available Scripts
 
 ```bash
-npx shadcn@latest add [component-name]
+# Development
+npm run dev          # Start development server
+
+# Build
+npm run build        # Create production build
+npm run start        # Start production server
+
+# Linting
+npm run lint         # Run ESLint
 ```
 
-### Customizing Authentication
+## 🔐 Authentication Flow
 
-Edit `auth.ts` to customize the authentication logic:
+1. User navigates to `/login` or `/register`
+2. Credentials are validated via NextAuth
+3. Session is created and stored
+4. Middleware protects routes based on authentication status
+5. Role-based access is enforced at the route level
 
-- Add new providers
-- Modify JWT callbacks
-- Configure session settings
+## 🛣️ Routing Structure
 
-## Customization
-
-### Theme
-
-Edit `app/globals.css` to customize the color scheme and theme variables.
-
-### Tailwind Configuration
-
-Modify `tailwind.config.ts` to add custom colors, fonts, or extend the theme.
-
-## Production Build
-
-```bash
-npm run build
-npm start
+```
+/                          # Landing page
+/login                     # Login page
+/register                  # Registration page
+/admin/dashboard           # Admin dashboard (protected)
+/client                    # Client home (protected)
+/client/dashboard          # Client dashboard (protected)
+/client/profile            # User profile (protected)
 ```
 
-## Notes
+## 🐛 Troubleshooting
 
-- The authentication is set up with a mock user for development
-- Replace the mock authentication in `auth.ts` with your actual API endpoint
-- Update the fetcher utility in `lib/fetcher.ts` with your API URL
-- Add proper error handling and validation as needed
+### Common Issues
 
-## License
+**Issue:** "Module not found" errors
 
-MIT
+- **Solution:** Run `npm install` to ensure all dependencies are installed
+
+**Issue:** Authentication not working
+
+- **Solution:** Check `.env.local` file and ensure all required variables are set
+
+**Issue:** API calls failing
+
+- **Solution:** Verify `NEXT_PUBLIC_API_URL` is correctly configured
+
+**Issue:** Build errors
+
+- **Solution:** Check for TypeScript errors with `npm run build`
