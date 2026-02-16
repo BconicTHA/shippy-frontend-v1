@@ -16,6 +16,7 @@ import {
   User,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
+import toast, { Toaster } from "react-hot-toast";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -65,15 +66,20 @@ export default function UserDashboard() {
       const statsResult = await getShipmentStats(session.accessToken);
       if (statsResult.success) {
         setStats(statsResult.data);
+      } else {
+        toast.error("Failed to load shipment statistics");
       }
 
       // Fetch shipments using service layer
       const shipmentsResult = await getAllShipments(session.accessToken);
       if (shipmentsResult.success) {
         setShipments(shipmentsResult.data);
+      } else {
+        toast.error("Failed to load shipments");
       }
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
+      toast.error("An error occurred while loading dashboard data");
     } finally {
       setLoading(false);
     }
@@ -86,7 +92,12 @@ export default function UserDashboard() {
   }, [session?.user, fetchDashboardData]);
 
   const handleLogout = async () => {
-    await signOut({ callbackUrl: "/" });
+    try {
+      await signOut({ callbackUrl: "/" });
+      toast.success("Logged out successfully");
+    } catch (error) {
+      toast.error("Failed to log out");
+    }
   };
 
   if (status === "loading" || loading) {
@@ -134,6 +145,34 @@ export default function UserDashboard() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Toast Container */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: "#fff",
+            color: "#363636",
+            boxShadow:
+              "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+            borderRadius: "8px",
+            padding: "16px",
+          },
+          success: {
+            iconTheme: {
+              primary: "#10b981",
+              secondary: "#fff",
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: "#ef4444",
+              secondary: "#fff",
+            },
+          },
+        }}
+      />
+
       {/* Header */}
       <header className="border-b border-gray-100 bg-white/80 backdrop-blur-lg sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4">

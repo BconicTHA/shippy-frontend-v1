@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import toast, { Toaster } from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -61,18 +62,21 @@ export default function RegisterClient() {
     // Validation
     if (!isPasswordValid) {
       setError("Please meet all password requirements");
+      toast.error("Please meet all password requirements");
       setIsLoading(false);
       return;
     }
 
     if (!passwordsMatch) {
       setError("Passwords do not match");
+      toast.error("Passwords do not match");
       setIsLoading(false);
       return;
     }
 
     if (!acceptTerms) {
       setError("Please accept the terms and conditions");
+      toast.error("Please accept the terms and conditions");
       setIsLoading(false);
       return;
     }
@@ -89,19 +93,55 @@ export default function RegisterClient() {
 
       if (result?.success === false) {
         setError(result.error || "Registration failed");
+        toast.error(result.error || "Registration failed. Please try again.");
         setIsLoading(false);
         return;
       }
 
-      router.push("/login?registered=true");
+      toast.success("Account created successfully! Redirecting to login...");
+
+      // Small delay to show the success toast
+      setTimeout(() => {
+        router.push("/login?registered=true");
+      }, 1000);
     } catch (err: any) {
-      setError(err?.message || "An unexpected error occurred");
+      const errorMessage = err?.message || "An unexpected error occurred";
+      setError(errorMessage);
+      toast.error(errorMessage);
       setIsLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white p-4">
+      {/* Toast Container */}
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "#fff",
+            color: "#363636",
+            boxShadow:
+              "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+            borderRadius: "8px",
+            padding: "16px",
+          },
+          success: {
+            iconTheme: {
+              primary: "#10b981",
+              secondary: "#fff",
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: "#ef4444",
+              secondary: "#fff",
+            },
+          },
+        }}
+      />
+
       {/* Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70" />

@@ -31,7 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Field, FieldLabel, FieldDescription } from "@/components/ui/field";
-import { toast } from "sonner";
+import toast from "react-hot-toast";
 import {
   Loader2,
   Package,
@@ -151,6 +151,9 @@ export default function CreateShipmentModal({
       return;
     }
 
+    // Show loading toast
+    const loadingToast = toast.loading("Creating shipment...");
+
     try {
       setIsSubmitting(true);
 
@@ -163,18 +166,44 @@ export default function CreateShipmentModal({
 
       const result = await createShipment(shipmentData, session.accessToken);
 
+      // Dismiss loading toast
+      toast.dismiss(loadingToast);
+
       if (result.success) {
-        toast.success("Shipment created successfully!");
+        toast.success(
+          <div>
+            <strong>Shipment Created Successfully!</strong>
+            <p className="text-sm">
+              Your shipment has been created and is being processed.
+            </p>
+          </div>,
+          {
+            duration: 5000,
+            icon: "📦",
+            style: {
+              background: "#10b981",
+              color: "#fff",
+            },
+          },
+        );
         reset();
         setSenderPhone(""); // Clear phone state
         onClose();
         onSuccess();
       } else {
-        toast.error(result.error || "Failed to create shipment");
+        toast.error(result.error || "Failed to create shipment", {
+          duration: 4000,
+          icon: "❌",
+        });
       }
     } catch (error) {
+      // Dismiss loading toast
+      toast.dismiss(loadingToast);
+
       console.error("Error creating shipment:", error);
-      toast.error("Failed to create shipment");
+      toast.error("An unexpected error occurred while creating the shipment", {
+        duration: 4000,
+      });
     } finally {
       setIsSubmitting(false);
     }

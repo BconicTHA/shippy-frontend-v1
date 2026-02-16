@@ -8,6 +8,7 @@ import { useSession } from "next-auth/react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import toast, { Toaster } from "react-hot-toast";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,25 +63,60 @@ export default function LoginClient() {
 
       if (result?.error) {
         setServerError("Invalid email or password");
+        toast.error("Invalid email or password. Please try again.");
         return;
       }
 
       if (result?.ok) {
-        if (session?.user?.usertype === "admin") {
-          router.push("/admin/dashboard");
-        } else {
-          router.push("/");
-        }
+        toast.success("Login successful! Redirecting...");
+
+        // Small delay to show the success toast
+        setTimeout(() => {
+          if (session?.user?.usertype === "admin") {
+            router.push("/admin/dashboard");
+          } else {
+            router.push("/");
+          }
+        }, 2000);
       }
 
       router.refresh();
     } catch (error) {
       setServerError("Something went wrong. Please try again.");
+      toast.error("An unexpected error occurred. Please try again.");
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white p-4">
+      {/* Toast Container */}
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: "#fff",
+            color: "#363636",
+            boxShadow:
+              "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+            borderRadius: "8px",
+            padding: "16px",
+          },
+          success: {
+            iconTheme: {
+              primary: "#10b981",
+              secondary: "#fff",
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: "#ef4444",
+              secondary: "#fff",
+            },
+          },
+        }}
+      />
+
       {/* Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70" />

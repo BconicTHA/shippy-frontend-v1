@@ -18,6 +18,7 @@ import {
   Shield,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
+import toast, { Toaster } from "react-hot-toast";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -58,6 +59,7 @@ export default function AdminDashboard() {
     if (status === "unauthenticated") {
       router.push("/login");
     } else if (session?.user?.usertype !== "admin") {
+      toast.error("Access denied. Admin privileges required.");
       router.push("/client/dashboard");
     }
   }, [status, session, router]);
@@ -78,22 +80,44 @@ export default function AdminDashboard() {
       const statsResult = await getShipmentStats(session.accessToken);
       if (statsResult.success) {
         setStats(statsResult.data);
+      } else {
+        toast.error("Failed to load shipment statistics");
       }
 
       // Fetch all shipments using service layer
       const shipmentsResult = await getAllShipments(session.accessToken);
       if (shipmentsResult.success) {
         setShipments(shipmentsResult.data);
+        if (shipmentsResult.data.length > 0) {
+          toast.success(
+            `Loaded ${shipmentsResult.data.length} shipments successfully`,
+          );
+        }
+      } else {
+        toast.error("Failed to load shipments data");
       }
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
+      toast.error("An error occurred while loading dashboard data");
     } finally {
       setLoading(false);
     }
   };
 
   const handleLogout = async () => {
-    await signOut({ callbackUrl: "/" });
+    try {
+      await signOut({ callbackUrl: "/" });
+      toast.success("Logged out successfully");
+    } catch (error) {
+      toast.error("Failed to log out");
+    }
+  };
+
+  const handleRefresh = async () => {
+    toast.loading("Refreshing data...", { id: "refresh" });
+    await fetchDashboardData();
+    toast.dismiss("refresh");
+    toast.success("Dashboard data refreshed");
   };
 
   if (status === "loading" || loading) {
@@ -141,6 +165,40 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Toast Container */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: "#fff",
+            color: "#363636",
+            boxShadow:
+              "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+            borderRadius: "8px",
+            padding: "16px",
+          },
+          success: {
+            iconTheme: {
+              primary: "#10b981",
+              secondary: "#fff",
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: "#ef4444",
+              secondary: "#fff",
+            },
+          },
+          loading: {
+            iconTheme: {
+              primary: "#3b82f6",
+              secondary: "#fff",
+            },
+          },
+        }}
+      />
+
       {/* Header */}
       <header className="border-b border-gray-100 bg-white/80 backdrop-blur-lg sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4">
@@ -223,7 +281,7 @@ export default function AdminDashboard() {
                   Total: {shipments.length} shipments
                 </div>
                 <Button
-                  onClick={fetchDashboardData}
+                  onClick={handleRefresh}
                   variant="outline"
                   size="sm"
                   className="border-gray-300"
