@@ -60,7 +60,7 @@ export default function AdminDashboard() {
       router.push("/login");
     } else if (session?.user?.usertype !== "admin") {
       toast.error("Access denied. Admin privileges required.");
-      router.push("/client/dashboard");
+      router.push("/");
     }
   }, [status, session, router]);
 
